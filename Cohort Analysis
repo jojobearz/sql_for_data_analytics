@@ -1,0 +1,15 @@
+/* SQL Server */
+
+
+
+select 
+  dateadd(month, datediff(month, '1900-01-01', APPLY_DATE), '1900-01-01') as CohortMonth,
+  dateadd(month, datediff(month, APPLY_DATE, BILLING_DATE), APPLY_DATE) as PurchaseMonth,
+  sum(ITEM_AMT) AS CohortRevenue
+from CUSTOMER
+    left join ORDERS
+        on CUSTOMER.CUSTOMER_ID = ORDERS.CUSTOMER_ID
+group by
+  dateadd(month, datediff(month, '1900-01-01', APPLY_DATE), '1900-01-01'),
+  dateadd(month, datediff(month, APPLY_DATE, BILLING_DATE), APPLY_DATE)
+order by CohortMonth, PurchaseMonth;
