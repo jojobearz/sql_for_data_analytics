@@ -1,0 +1,10 @@
+/* SQL Server */
+/* Find product association in same order */
+
+with ORDERS as (select * from ORDERS)
+select ORDER1.PRODUCT_ID, ORDER2.PRODUCT_ID, count(*) ASSOCIATION_COUNT
+from ORDERS ORDER1
+    inner join ORDERS ORDER2 on ORDER1.ORDER_ID = ORDER2.ORDER_ID
+where ORDER1.PRODUCT_ID < ORDER2.PRODUCT_ID
+group by ORDER1.PRODUCT_ID, ORDER2.PRODUCT_ID
+order by ASSOCIATION_COUNT desc
