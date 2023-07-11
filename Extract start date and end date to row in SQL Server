@@ -1,0 +1,30 @@
+/*
+  Extract start date and end date to row in SQL Server
+*/
+
+WITH E00(N) AS (SELECT 1 UNION ALL SELECT 1)
+    ,E02(N) AS (SELECT 1 FROM E00 a, E00 b)
+    ,E04(N) AS (SELECT 1 FROM E02 a, E02 b)
+    ,E08(N) AS (SELECT 1 FROM E04 a, E04 b)
+    ,E16(N) AS (SELECT 1 FROM E08 a, E08 b)
+    ,E32(N) AS (SELECT 1 FROM E16 a, E16 b)
+    ,cteTally(N) AS (SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) FROM E32)
+    ,DateRange AS
+(
+    SELECT ExplodedDate = DATEADD(DAY,N - 1,'2023-01-01')
+    FROM cteTally
+    WHERE N <= 366
+)
+
+select * from  (
+/* Put your query here */
+
+select 'A' id, '2023-01-01' StartDate, '2023-01-31' EndDate
+union 
+select 'B' id, '2023-02-01' StartDate, '2023-02-28' EndDate
+
+
+) Temp
+JOIN DateRange d ON d.ExplodedDate >= Temp.[StartDate]
+ AND d.ExplodedDate <= Temp.[EndDate];
+
