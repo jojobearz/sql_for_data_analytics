@@ -1,0 +1,15 @@
+/*
+CONVERT(DATE, 'INPUT_DATE', 23) -- INPUT_DATE = DATE You want to convert, 23 it's mean convert string format YYYY-MM-DD to date
+*/
+
+WITH DateRange_CTE AS (
+    SELECT CONVERT(DATE, '2023-01-01', 23) AS Date --StartDate
+    UNION ALL
+    SELECT DATEADD(day, 1, Date)
+    FROM DateRange_CTE
+    WHERE DATEADD(day, 1, Date) <= CONVERT(DATE, '2023-01-31', 23) -- EndDate
+)
+SELECT Date
+FROM DateRange_CTE
+OPTION (MAXRECURSION 0);
+
