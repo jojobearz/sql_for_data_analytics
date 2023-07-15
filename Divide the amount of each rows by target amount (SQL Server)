@@ -1,0 +1,37 @@
+
+declare @target_amount as numeric(18, 0) = 3000;
+declare @target_coupon as int = 10;
+
+select * from (
+       
+       select TICKET_NO, CUSTOMER_NAME, NET_ITEM_AMT, case when NET_ITEM_AMT / @target_amount > @target_coupon then @target_coupon else cast(NET_ITEM_AMT / @target_amount as int) end SWEEPSTAKES_TICKET
+       from (
+              /* Example of target sales order --> 2 sales order 10000 and 5000 */
+              select 1 TICKET_NO, 'A' CUSTOMER_NAME, 10000 NET_ITEM_AMT
+              union all 
+              select 2 TICKET_NO, 'B' CUSTOMER_NAME, 5000 NET_ITEM_AMT
+       ) CUSTOMER_BILLING
+
+) BILLING
+
+cross join (
+    select 1 as NUM union all 
+    select 2 as NUM union all 
+    select 3 as NUM union all 
+    select 4 as NUM union all 
+    select 5 as NUM union all 
+    select 6 as NUM union all 
+    select 7 as NUM union all 
+    select 8 as NUM union all 
+    select 9 as NUM union all 
+    select 10 as NUM
+) as REPLICATOR
+where BILLING.SWEEPSTAKES_TICKET >= REPLICATOR.NUM
+
+/* Result is */
+/*
+   Ticket No 1 --> 3 rows generated
+   Ticket No 2 --> 1 rows generated
+*/
+
+
