@@ -1,0 +1,31 @@
+select CUSTOMER_ID, PRODUCT_ID, PRODUCT_COUNT
+from (
+
+  select CUSTOMER_ID, PRODUCT_ID, count(PRODUCT_ID) PRODUCT_COUNT, rank() over(partition by CUSTOMER_ID order by count(PRODUCT_ID) desc, sum(NET_ITEM_AMT) asc) as PRODUCT_RANK 
+  from (
+    select 'A' CUSTOMER_ID, 'S001' PRODUCT_ID, 100 NET_ITEM_AMT
+    union all
+    select 'A' CUSTOMER_ID, 'S002' PRODUCT_ID, 1100 NET_ITEM_AMT
+    union all
+    select 'A' CUSTOMER_ID, 'S002' PRODUCT_ID, 1500 NET_ITEM_AMT
+    union all
+    select 'A' CUSTOMER_ID, 'S002' PRODUCT_ID, 900 NET_ITEM_AMT
+    union all
+    select 'B' CUSTOMER_ID, 'S002' PRODUCT_ID, 800 NET_ITEM_AMT
+    union all
+    select 'B' CUSTOMER_ID, 'S001' PRODUCT_ID, 100 NET_ITEM_AMT
+  ) CUSTOMER_PRODUCT_RANK
+  group by CUSTOMER_ID, PRODUCT_ID
+
+) CUSTOMER_PRODUCT
+
+where PRODUCT_RANK = 1
+  
+
+/*
+Results -----------------------------
+CUSTOMER_ID	PRODUCT_ID	PRODUCT_COUNT
+A	          S002	      3
+B	          S001	      1
+-------------------------------------
+*/
