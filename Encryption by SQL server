@@ -1,0 +1,5 @@
+/* SHA2_256 Encrypt message by SQL server */
+/* Replace your message in SQL query */
+
+select convert(varchar(256), HASHBYTES('SHA2_256', 'Test Message'), 2) as ENCRYPT_MESSAGE
+
