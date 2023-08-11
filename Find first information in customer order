@@ -1,0 +1,23 @@
+/* Find first information in customer order */
+
+select distinct CUSTOMER_NAME, first_value(STORE) over(partition by CUSTOMER_NAME order by BILLING_DATE) FIRST_VISIT_STORE
+from (
+  select 'Laura Navarro' CUSTOMER_NAME, '2023-01-01' BILLING_DATE, 'S009' STORE
+  union all
+  select 'Laura Navarro' CUSTOMER_NAME, '2023-02-01' BILLING_DATE, 'S001' STORE
+  union all
+  select 'Franco Alvarez' CUSTOMER_NAME, '2023-02-21' BILLING_DATE, 'S100' STORE
+  union all
+  select 'Francisco Marin' CUSTOMER_NAME, '2023-02-22' BILLING_DATE, 'S011' STORE
+) ORDER_DETAIL
+
+
+/*
+Result: 
+
+CUSTOMER_NAME	    FIRST_VISIT_STORE
+Francisco Marin	  S011
+Franco Alvarez	  S100
+Laura Navarro	    S009
+
+*/
