@@ -1,0 +1,13 @@
+declare @StartDate DATE = '2021-01-01';
+declare @EndDate DATE = '2023-12-01';
+
+while (@StartDate <= @EndDate)
+  begin
+
+    print @StartDate;
+    /* Your SQL statement */
+
+    set @StartDate = DATEADD(month, 1, @StartDate);
+
+  end;
+
