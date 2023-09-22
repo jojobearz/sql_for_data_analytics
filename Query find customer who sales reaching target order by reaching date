@@ -1,0 +1,47 @@
+/* SQL Server */
+
+WITH CustomerCumulativeSales AS (
+  SELECT
+    customer_id,
+    order_date,
+    SUM(order_amount) OVER (PARTITION BY customer_id ORDER BY order_date) AS cumulative_sales
+  FROM
+    (
+        select 'A' customer_id, '2023-01-01' order_date, 10000 order_amount
+        union 
+        select 'A' customer_id, '2023-01-02' order_date, 40000 order_amount
+        union 
+        select 'B' customer_id, '2023-01-02' order_date, 60000 order_amount
+        union 
+        select 'A' customer_id, '2023-01-03' order_date, 60000 order_amount
+        union 
+        select 'B' customer_id, '2023-01-10' order_date, 60000 order_amount
+    ) orders
+),
+CustomersReachedThreshold AS (
+  SELECT
+    customer_id,
+    min(order_date) AS reaching_date
+  FROM
+    CustomerCumulativeSales
+  WHERE
+    cumulative_sales >= 60000
+  GROUP BY
+    customer_id
+)
+SELECT
+  c.customer_id,
+  min(c.cumulative_sales) AS total_sales,
+  r.reaching_date
+FROM
+  CustomerCumulativeSales c
+INNER JOIN
+  CustomersReachedThreshold r
+ON
+  c.customer_id = r.customer_id
+where c.cumulative_sales >= 60000
+group by c.customer_id, r.reaching_date
+ORDER BY
+  r.reaching_date;
+
+
